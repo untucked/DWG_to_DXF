@@ -9,16 +9,21 @@
 
 Convert DWG to DXF
 
-### Goal
+## Goal
 ------------
 
 
 ## How It Works
 ------------
-There are 2 ways to run this. In cmd prompt run this: 
->> python dwg_to_dxf.py --directory ./dwg_files
-or
-run the dwg_to_dxf.py file in VScode
+
+There are 2 ways to run this script:
+
+### 1️⃣ Run from Command Line (CMD)
+
+Execute the following command:
+
+```bash
+python dwg_to_dxf.py --directory ./dwg_files
 
 
 ## Features
