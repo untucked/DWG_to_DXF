@@ -40,9 +40,11 @@ python dwg_to_dxf.py --directory ./dwg_files
 
 ## GIT
 ----------------------------
+``` bash
 git init
 git add .
 git commit -m "Initialize"
 git branch -M main
 git remote add origin https://github.com/untucked/DWG_to_DXF.git
 git push -u origin main
+```
