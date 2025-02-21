@@ -6,6 +6,8 @@ from aspose.cad import Image
 from aspose.cad.fileformats.cad import CadImage
 import ezdxf
 import os
+from tqdm import tqdm  # Progress bar
+
 
 def dxf_options(dwg_path, dwg_file, dxf_path, dxf_file,
                 start_time, total_files, idx):
@@ -53,6 +55,36 @@ def print_dxf_file(dxf_file):
     except ezdxf.DXFStructureError:
         print("Invalid or corrupted DXF file.")
 
+# Function to handle DWG to DXF conversion
+def convert_dwg_to_dxf(fdir):
+    # Create an output directory for DXF files
+    output_dir = os.path.join(fdir, "DXF_Converted")
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Get all DWG files in the directory
+    dwg_files = [f for f in os.listdir(fdir) if f.lower().endswith('.dwg')]
+    total_files = len(dwg_files)
+    print(f"Found {total_files} DWG files for conversion.")
+
+    # Start processing with a progress bar
+    for i, dwg_file in enumerate(tqdm(dwg_files, desc="Converting DWG to DXF", unit="file")):
+        dwg_path = os.path.join(fdir, dwg_file)
+        dxf_file = os.path.splitext(dwg_file)[0] + ".dxf"
+        dxf_path = os.path.join(output_dir, dxf_file)
+
+        start_time = time.time()  # Track time for each file
+
+        try:
+            dxf_options(dwg_path, dwg_file, dxf_path, dxf_file, start_time, total_files, i)
+        except Exception as e:
+            print(f"\nError converting {dwg_file}: {e}")
+
+        try:
+            print_dxf_file(dxf_path)
+        except Exception as e:
+            print(f"\nError getting layers from DXF file {dxf_file}: {e}")
+
+    print("Batch conversion completed successfully!")
 
 if __name__ == "__main__":
     dxf_file = './dwg_files/DXF_Converted/civil_example-imperial.dxf'
