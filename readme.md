@@ -38,7 +38,13 @@ python dwg_to_dxf.py --directory ./dwg_files
 ## Dependencies 
 ----------------------------
 
-## GIT
+## GIT - CLONE
+----------------------------
+``` bash
+git clone https://github.com/untucked/DWG_to_DXF.git
+```
+
+#### GIT - Upload
 ----------------------------
 ``` bash
 git init
