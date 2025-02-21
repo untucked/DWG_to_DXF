@@ -1,4 +1,4 @@
-# Inactivity Python GUI
+# DWG to DXF
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.25.0-blue.svg)
@@ -15,6 +15,10 @@ Convert DWG to DXF
 
 ## How It Works
 ------------
+There are 2 ways to run this. In cmd prompt run this: 
+>> python dwg_to_dxf.py --directory ./dwg_files
+or
+run the dwg_to_dxf.py file in VScode
 
 
 ## Features

@@ -4,57 +4,62 @@ from aspose.cad import Color  # Correct Color import
 import os
 import time
 from tqdm import tqdm  # Progress bar
+import argparse  # For command-line arguments
+# local
+import support
 
-# Specify the directory containing the DWG files
-fdir = './dwg_files'
+# Function to handle DWG to DXF conversion
+def convert_dwg_to_dxf(fdir):
+    # Create an output directory for DXF files
+    output_dir = os.path.join(fdir, "DXF_Converted")
+    os.makedirs(output_dir, exist_ok=True)
 
-# Create an output directory for DXF files
-output_dir = os.path.join(fdir, "DXF_Converted")
-os.makedirs(output_dir, exist_ok=True)
+    # Get all DWG files in the directory
+    dwg_files = [f for f in os.listdir(fdir) if f.lower().endswith('.dwg')]
+    total_files = len(dwg_files)
+    print(f"Found {total_files} DWG files for conversion.")
 
-# Get all DWG files in the directory
-dwg_files = [f for f in os.listdir(fdir) if f.lower().endswith('.dwg')]
+    # Start processing with a progress bar
+    for i, dwg_file in enumerate(tqdm(dwg_files, desc="Converting DWG to DXF", unit="file")):
+        dwg_path = os.path.join(fdir, dwg_file)
+        dxf_file = os.path.splitext(dwg_file)[0] + ".dxf"
+        dxf_path = os.path.join(output_dir, dxf_file)
 
-total_files = len(dwg_files)
-print(f"Found {total_files} DWG files for conversion.")
+        start_time = time.time()  # Track time for each file
 
-# Start processing with a progress bar
-for i, dwg_file in enumerate(tqdm(dwg_files, desc="Converting DWG to DXF", unit="file")):
-    dwg_path = os.path.join(fdir, dwg_file)
-    dxf_file = os.path.splitext(dwg_file)[0] + ".dxf"
-    dxf_path = os.path.join(output_dir, dxf_file)
+        try:
+            support.dxf_options(dwg_path, dwg_file, dxf_path, dxf_file, start_time, total_files, i)
+        except Exception as e:
+            print(f"\nError converting {dwg_file}: {e}")
 
-    start_time = time.time()  # Track time for each file
+        try:
+            support.print_dxf_file(dxf_path)
+        except Exception as e:
+            print(f"\nError getting layers from DXF file {dxf_file}: {e}")
 
-    try:
-        # Load DWG file
-        image = cad.Image.load(dwg_path)
+    print("Batch conversion completed successfully!")
 
-        # Specify DXF options
-        # cadRasterizationOptions =  cad.imageoptions.CadRasterizationOptions()
-        # Specify DXF options
-        #  # Specify DXF options
-        # cadRasterizationOptions.page_height = 800.5
-        # cadRasterizationOptions.page_width = 800.5
-        # cadRasterizationOptions.zoom = 1.5
-        # cadRasterizationOptions.layers = "Layer"
-        # cadRasterizationOptions.background_color = Color.green
+#  Main function to handle both command-line and VSCode front-end execution
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Convert DWG files to DXF format.")
+    parser.add_argument("--directory", help="Path to the directory containing DWG files")
+    args = parser.parse_args()
 
-        options =  cad.imageoptions.DxfOptions()
-        options.version = cad.imageoptions.DxfOutputVersion.R12
+    if args.directory:
+        # Command-line mode
+        input_directory = args.directory
+        if not os.path.isdir(input_directory):
+            print(f"Error: The directory '{input_directory}' does not exist.")
+        else:
+            convert_dwg_to_dxf(input_directory)
+    else:
+        # VSCode Interactive Mode
+        # 👇 Set this manually when running from VSCode
+        input_directory = './dwg_files'
 
-        # Save as DXF
-        image.save(dxf_path, options)
-
-        # Calculate time taken for this file
-        time_taken = time.time() - start_time
-        estimated_time_remaining = time_taken * (total_files - (i + 1))
-
-        print(f"\n{dwg_file} converted to {dxf_file} ({time_taken:.2f} sec)")
-        print(f"Estimated time remaining: {estimated_time_remaining / 60:.2f} minutes")
-    
-    except Exception as e:
-        print(f"\nError converting {dwg_file}: {e}")
-    break
-
-print("Batch conversion completed successfully!")
+        # Validate and run
+        if not os.path.isdir(input_directory):
+            print(f"Error: The directory '{input_directory}' does not exist.")
+        else:
+            print(f"Running in VSCode Interactive Mode using directory: {input_directory}")
+            convert_dwg_to_dxf(input_directory)
