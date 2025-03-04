@@ -26,7 +26,6 @@ if __name__ == "__main__":
         # VSCode Interactive Mode
         # 👇 Set this manually when running from VSCode
         input_directory = './dwg_files'
-        # input_directory = r"C:\Users\bradley.eylander\OneDrive - LMI Consulting\CUI-PSNS SIOP CADS\DoD SAFE-jeshUoUp36YSF8YC"
         layers_only = False
 
         # Validate and run
