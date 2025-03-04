@@ -24,6 +24,7 @@ Execute the following command:
 
 ```bash
 python dwg_to_dxf.py --directory ./dwg_files
+python dwg_to_dxf.py --directory "C:\Users\user\directory with spaces""
 ```
 ### 2 Run from dwg_to_dxf.py in VSCode
 

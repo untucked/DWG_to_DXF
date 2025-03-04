@@ -39,24 +39,29 @@ def dxf_options(dwg_path, dwg_file, dxf_path, dxf_file,
     print(f"\n{dwg_file} converted to {dxf_file} ({time_taken:.2f} sec)")
     print(f"Estimated time remaining: {estimated_time_remaining / 60:.2f} minutes")
 
-def print_dxf_file(dxf_file):
+def print_dxf_file(dxf_file, output_txt=True):
     try:
         doc = ezdxf.readfile(dxf_file)
         layers = doc.layers
-
         print("Available layers:")
+        layer_names = [layer.dxf.name for layer in layers]
         for i, layer in enumerate(layers, start=1):
             print(f"{i}. {layer.dxf.name}")
-
-        return [layer.dxf.name for layer in layers]
-
+        # Output to a text file
+        if output_txt:
+            output_filename = f"{os.path.splitext(dxf_file)[0]}_layers.txt" 
+            with open(output_filename, "w") as f:
+                f.write(f"Total number of layers: {len(layers)}. Available layers:\n")
+                for i, layer_name in enumerate(layer_names, start=1):
+                    f.write(f"{i}. {layer_name}\n")
+            print(f"Layer list written to {output_filename}")
     except IOError:
         print(f"Cannot open DXF file: {dxf_file}")
     except ezdxf.DXFStructureError:
         print("Invalid or corrupted DXF file.")
 
 # Function to handle DWG to DXF conversion
-def convert_dwg_to_dxf(fdir):
+def convert_dwg_to_dxf(fdir, layers_only=False):
     # Create an output directory for DXF files
     output_dir = os.path.join(fdir, "DXF_Converted")
     os.makedirs(output_dir, exist_ok=True)
@@ -74,10 +79,11 @@ def convert_dwg_to_dxf(fdir):
 
         start_time = time.time()  # Track time for each file
 
-        try:
-            dxf_options(dwg_path, dwg_file, dxf_path, dxf_file, start_time, total_files, i)
-        except Exception as e:
-            print(f"\nError converting {dwg_file}: {e}")
+        if not layers_only:
+            try:
+                dxf_options(dwg_path, dwg_file, dxf_path, dxf_file, start_time, total_files, i)
+            except Exception as e:
+                print(f"\nError converting {dwg_file}: {e}")
 
         try:
             print_dxf_file(dxf_path)
@@ -88,4 +94,4 @@ def convert_dwg_to_dxf(fdir):
 
 if __name__ == "__main__":
     dxf_file = './dwg_files/DXF_Converted/civil_example-imperial.dxf'
-    print_dxf_file(dxf_file)
+    print_dxf_file(dxf_file, layers_only=True)
